@@ -40,7 +40,7 @@
           
           
           
-          <a href="/">トップページ</a>
+          <a href="/">Home</a>
         
           
           
@@ -48,7 +48,7 @@
           
           
           
-          <a href="/archives">ポスト</a>
+          <a href="/archives">Archives</a>
         
           
           
@@ -56,7 +56,7 @@
           
           
           
-          <a href="/about">について</a>
+          <a href="/about">About</a>
         
       </div>
     </div>
@@ -77,6 +77,16 @@
         </h2>
         <div class="article-item-content">
           
+            <p>####前提：确保Zookeeper和HDFS已经启动
+
+在spark-env.sh中注释掉SPARK_MASTER_HOST&amp;#x3D;master
+
+
+
+追加以下内容
+
+1234567SPARK_DAEMON_JAVA_OPTS=&amp;quot;-Dspark.deploy.recoveryMode...</p>
+          
         </div>
         <div class="atricle-item-time">
           
@@ -94,6 +104,16 @@
           </a>
         </h2>
         <div class="article-item-content">
+          
+            <p>
+集群规划
+
+
+2.在所有机器安装Python（Anaconda），同时创建pyspark环境和下载所需要的库，参考Local模式部署
+123453.配置配置文件####进入spark配置文件目录# cd /export/server/spark/conf/
+
+**(1)配置workers**文件
+...</p>
           
         </div>
         <div class="atricle-item-time">
@@ -156,7 +176,7 @@ JDK 1.8安装 上传 jdk-8u241-linux-x64.tar.gz到&amp;#x2F;export&amp;#x2F;serv
 
     <div class="pagenator">
     
-        <a class="extend prev-none">前のページ</a>
+        <a class="extend prev-none">prev</a>
     
     
 
@@ -168,7 +188,7 @@ JDK 1.8安装 上传 jdk-8u241-linux-x64.tar.gz到&amp;#x2F;export&amp;#x2F;serv
     
     
     
-        <a class="extend next-none">次のページ</a>
+        <a class="extend next-none">next</a>
     
     
 </div>

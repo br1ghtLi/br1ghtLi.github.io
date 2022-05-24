@@ -40,7 +40,7 @@
           
           
           
-          <a href="/">トップページ</a>
+          <a href="/">Home</a>
         
           
           
@@ -48,7 +48,7 @@
           
           
           
-          <a href="/archives">ポスト</a>
+          <a href="/archives">Archives</a>
         
           
           
@@ -56,7 +56,7 @@
           
           
           
-          <a href="/about">について</a>
+          <a href="/about">About</a>
         
       </div>
     </div>
@@ -65,7 +65,54 @@
     <div class="container">
         <h1 class="post-title">Spark HA&amp; Yarn配置</h1>
 <article class="post markdown-style">
-  
+  <p>####前提：确保Zookeeper和HDFS已经启动</p>
+<ol>
+<li>在spark-env.sh中注释掉SPARK_MASTER_HOST&#x3D;master</li>
+</ol>
+<p><img src="/.com//clip_image002-16533751039901.jpg" alt="img"></p>
+<ol start="2">
+<li>追加以下内容</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SPARK_DAEMON_JAVA_OPTS=&quot;-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=master:2181,slave1:2181,slave2:2181 -Dspark.deploy.zookeeper.dir=/spark-ha&quot;</span><br><span class="line"></span><br><span class="line"># spark.deploy.recoveryMode 指定HA模式 基于Zookeeper实现</span><br><span class="line"></span><br><span class="line"># 指定Zookeeper的连接地址</span><br><span class="line"></span><br><span class="line"># 指定在Zookeeper中注册临时节点的路径</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.com//clip_image004-16533751039912.jpg" alt="img"></p>
+<ol start="3">
+<li>分发spark-env.sh</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># scp spark-env.sh slave1:/export/server/spark/conf/</span><br><span class="line"></span><br><span class="line"># scp spark-env.sh slave2:/export/server/spark/conf/</span><br><span class="line"></span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>停止当前StandAlong集群</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># cd /export/server/spark</span><br><span class="line"></span><br><span class="line"># sbin/stop-all.sh</span><br><span class="line"></span><br><span class="line"># 在master上启动一个master和 全部worker</span><br><span class="line"></span><br><span class="line"># sbin/start-all.sh</span><br><span class="line"></span><br><span class="line">#下面命令只在slave1上执行</span><br><span class="line"></span><br><span class="line">#在slave1上启动一个备用master进程</span><br><span class="line"></span><br><span class="line"># sbin/start-master.sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.com//clip_image006-16533751039913.jpg" alt="img"><img src="/.com//clip_image008-16533751039914.jpg" alt="img"></p>
+<ol start="5">
+<li>主备切换</li>
+</ol>
+<p>#提交一个spark任务到当前alive master上，在提交成功后将alive master 直接kill掉</p>
+<p><img src="/.com//clip_image010-16533751039915.jpg" alt="img"></p>
+<p><strong>结论： HA模式下, 主备切换 不会影响到正在运行的程序.</strong></p>
+<p>一、Spark(Yarn)Yarn集群模式部署</p>
+<p>1.检查spark-env.sh中HADOOP_CONF_DIR和YARN_CONF_DIR</p>
+<p><img src="/.com//clip_image012-16533751039916.jpg" alt="img"></p>
+<p>###在&#x2F;etc&#x2F;profile中追加（三台机器追加）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#YARN_CONF_DIR</span><br><span class="line"></span><br><span class="line">export YARN_CONF_DIR=/export/server/hadoop/etc/hadoop</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.com//clip_image013.png" alt="img"></p>
+<p>\2.   连接到YARN中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># bin/pyspark --master yarn --deploy-mode client</span><br><span class="line"></span><br><span class="line"># bin/pyspark --master yarn --deploy-mode cluster</span><br><span class="line"></span><br><span class="line"># --deploy-mode 选项是指定部署模式, 默认是 客户端模式</span><br><span class="line"></span><br><span class="line"># client就是客户端模式</span><br><span class="line"></span><br><span class="line"># cluster就是集群模式</span><br><span class="line"></span><br><span class="line"># --deploy-mode 仅可以用在YARN模式下</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.com//clip_image015.jpg" alt="img"></p>
+<p><strong>注意: 交互式环境 pyspark  和 spark-shell  无法运行 cluster模式</strong></p>
+<ol start="3">
+<li>测试</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># bin/spark-submit --master yarn /export/server/spark/examples/src/main/python/pi.py 10</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.com//clip_image017.jpg" alt="img"></p>
+<p><img src="/.com//clip_image019.jpg" alt="img"></p>
+
 </article>
 
     <div class="pagenator post-pagenator">
@@ -73,10 +120,10 @@
     
 
     
-    <p>前回の更新 2022-05-22</p>
+    <p>last update time 2022-05-24</p>
     
     
-        <a class="extend next post-next" href="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/">次の章</a>
+        <a class="extend next post-next" href="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/">next</a>
     
     </div>
 

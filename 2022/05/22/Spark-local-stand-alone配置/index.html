@@ -68,7 +68,7 @@
   <ol>
 <li>集群规划</li>
 </ol>
-<p><img src="/.com//clip_image002.jpg" alt="img"><img src="/.com//clip_image004.jpg" alt="img"></p>
+<p><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image002.jpg" alt="img"><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image004.jpg" alt="img"></p>
 <p>2.在所有机器安装Python（Anaconda），同时创建pyspark环境和下载所需要的库，参考Local模式部署</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">3.配置配置文件</span><br><span class="line"></span><br><span class="line">####进入spark配置文件目录</span><br><span class="line"></span><br><span class="line"># cd /export/server/spark/conf/</span><br></pre></td></tr></table></figure>
 
@@ -78,7 +78,7 @@
 <p><strong>(1)</strong>  <strong>配置<strong><strong>spark-env.sh</strong></strong>文件</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">###改名</span><br><span class="line"></span><br><span class="line"># mv spark-env.sh.templat##e spark-env.sh</span><br><span class="line"></span><br><span class="line">###编辑spark-env.sh, 在底部追加如下内容</span><br><span class="line"></span><br><span class="line">#vim spark-env.sh</span><br><span class="line"></span><br><span class="line">##设置JAVA安装目录</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.com//clip_image007.jpg" alt="img"></p>
+<p><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image007.jpg" alt="img"></p>
 <p><strong>(2)</strong> <strong>在HDFS上创建程序运行历史记录存放的文件夹</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#hadoop fs -mkdir /sparklog</span><br><span class="line"></span><br><span class="line">#hadoop fs -chmod 777 /sparklog</span><br></pre></td></tr></table></figure>
 
@@ -86,31 +86,31 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">####改名</span><br><span class="line"></span><br><span class="line"># mv spark-defaults.conf.template spark-defaults.conf</span><br><span class="line"></span><br><span class="line"># vim spark-defaults.conf</span><br></pre></td></tr></table></figure>
 
 <p>###开启spark的日期记录功能</p>
-<p><img src="/.com//clip_image010.jpg" alt="img"></p>
+<p><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image010.jpg" alt="img"></p>
 <p>(4) 配置log4j.properties 文件 [可选配置]</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#改名</span><br><span class="line"></span><br><span class="line"># mv log4j.properties.template log4j.properties</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.com//clip_image012.jpg" alt="img"></p>
+<p><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image012.jpg" alt="img"></p>
 <p>(5)  分发spark</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#scp -r /export/server/spark-3.2.0-bin-hadoop3.2 root@slave1:/export/server/</span><br><span class="line"></span><br><span class="line">#scp -r /export/server/spark-3.2.0-bin-hadoop3.2 root@slave2:/export/server/</span><br></pre></td></tr></table></figure>
 
 <p>(6)  配置环境变量和root&#x2F;.bashrc文件（三台都需要配置）</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#vim /etc/profile</span><br><span class="line"></span><br><span class="line">#spark</span><br><span class="line"></span><br><span class="line">export SPARK_HOME=/export/server/spark</span><br><span class="line"></span><br><span class="line">#HADOOP_CONF_DIR</span><br><span class="line"></span><br><span class="line">export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop</span><br><span class="line"></span><br><span class="line">#PYSPARK_PYTHON</span><br><span class="line"></span><br><span class="line">export PYSPARK_PYTHON=/export/server/anaconda3/envs/pyspark/bin/python</span><br><span class="line"></span><br><span class="line"># vim ~/.bashrc</span><br><span class="line"></span><br><span class="line">#追加</span><br><span class="line"></span><br><span class="line">export PYSPARK_PYTHON=/export/server/anaconda3/envs/pyspark/bin/python</span><br><span class="line"></span><br><span class="line">export JAVA_HOME=/export/server/jdk</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.com//clip_image014.jpg" alt="img"></p>
+<p><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image014.jpg" alt="img"></p>
 <p>(7)  启动历史服务器</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sbin/start-history-server.sh</span><br></pre></td></tr></table></figure>
 
 <p>(8)  启动Spark的Master和Worker进程</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sbin/start-all.sh</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.com//clip_image016.jpg" alt="img"><img src="/.com//clip_image018.jpg" alt="img"><img src="/.com//clip_image020.jpg" alt="img"></p>
+<p><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image016.jpg" alt="img"><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image018.jpg" alt="img"><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image020.jpg" alt="img"></p>
 <ol start="2">
 <li>WEB UI（8080）</li>
 </ol>
 <p>####master默认端口是8080，如果被占用会顺延到8081….</p>
 <p>Master UI ：master:8080 历史服务器 WEB UI：master:18080</p>
-<p><img src="/.com//clip_image022.jpg" alt="img"><img src="/.com//clip_image024.jpg" alt="img"></p>
+<p><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image022.jpg" alt="img"><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image024.jpg" alt="img"></p>
 <ol start="3">
 <li>连接到StandAlone集群</li>
 </ol>
@@ -127,7 +127,7 @@
 <h4 id="bin-x2F-spark-submit-PI"><a href="#bin-x2F-spark-submit-PI" class="headerlink" title="# bin&#x2F;spark-submit (PI)"></a># bin&#x2F;spark-submit (PI)</h4><p># 同样使用–master来指定将任务提交到集群运行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># bin/spark-submit --master spark://master:7077 /export/server/spark/examples/src/main/python/pi.py 100</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.com//clip_image026.jpg" alt="img"></p>
+<p><img src="/./Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image026.jpg" alt="img"></p>
 
 </article>
 

@@ -75,7 +75,7 @@
 <p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/01.png" alt="01"></p>
 <p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/02.png" alt="02"></p>
 <p>####安装成功，退出finalshell再重新进来</p>
-<p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image007.png" alt="img"></p>
+<p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/124.png" alt="124"></p>
 <p>####创建虚拟环境</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda create -n pyspark python=3.8</span><br></pre></td></tr></table></figure>
 
@@ -92,7 +92,7 @@
 <p>####做软链接</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s /export/server/spark-3.2.0-bin-hadoop3.2 /export/server/spark</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image011.jpg" alt="img"></p>
+<p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/125.png" alt="125"></p>
 <p><strong>(2)</strong>  <strong>测试</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd /export/server/spark/bin</span><br><span class="line"></span><br><span class="line">./pyspark</span><br><span class="line"></span><br><span class="line">sc.parallelize([1,2,3,4,5]).map(lambda x: x + 1).collect()</span><br></pre></td></tr></table></figure>
 
@@ -129,7 +129,7 @@
 <p>####编辑spark-env.sh, 在底部追加如下内容</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim spark-env.sh</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image005.png" alt="文本框: ## 设置JAVA安装目录 JAVA_HOME=/export/server/jdk  ## HADOOP软件配置文件目录，读取HDFS上文件和运行YARN集群 HADOOP_CONF_DIR=/export/server/hadoop/etc/hadoop YARN_CONF_DIR=/export/server/hadoop/etc/hadoop  ## 指定spark老大Master的IP和提交任务的通信端口 # 告知Spark的master运行在哪个机器上 export SPARK_MASTER_HOST=master # 告知sparkmaster的通讯端口 export SPARK_MASTER_PORT=7077 # 告知spark master的 webui端口 SPARK_MASTER_WEBUI_PORT=8080  # worker cpu可用核数 SPARK_WORKER_CORES=1 # worker可用内存 SPARK_WORKER_MEMORY=1g # worker的工作通讯地址 SPARK_WORKER_PORT=7078 # worker的 webui地址 SPARK_WORKER_WEBUI_PORT=8081  ## 设置历史服务器 # 配置的意思是  将spark程序运行的历史日志 存到hdfs的/sparklog文件夹中 SPARK_HISTORY_OPTS=&quot;-Dspark.history.fs.logDirectory=hdfs://master:8020/sparklog/ -Dspark.history.fs.cleaner.enabled=true&quot; "></p>
+<p>###设置JAVA安装目录</p>
 <p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/3.png" alt="3"></p>
 <p><strong>(2)</strong> <strong>在HDFS上创建程序运行历史记录存放的文件夹</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -mkdir /sparklog</span><br><span class="line"></span><br><span class="line">hadoop fs -chmod 777 /sparklog</span><br></pre></td></tr></table></figure>
@@ -138,8 +138,8 @@
 <p>####改名</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mv spark-defaults.conf.template spark-defaults.conf</span><br><span class="line"></span><br><span class="line">vim spark-defaults.conf</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/clip_image001.png" alt="文本框: # 开启spark的日期记录功能 spark.eventLog.enabled 	true # 设置spark日志记录的路径 spark.eventLog.dir	 hdfs://master:8020/sparklog/  # 设置spark日志是否启动压缩 spark.eventLog.compress 	true ">  </p>
-<p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/Users/24356/Pictures/4.png" alt="4"></p>
+<p>###开启spark的日期记录功能</p>
+<p><img src="/2022/05/22/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/126.png" alt="126"></p>
 <p>(4) 配置log4j.properties 文件 [可选配置]</p>
 <p>#改名</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv log4j.properties.template log4j.properties</span><br></pre></td></tr></table></figure>

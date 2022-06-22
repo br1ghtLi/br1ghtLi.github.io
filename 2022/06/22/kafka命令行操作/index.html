@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <title>kafka命令行操作 [ br1ghtLi-blog ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="/css/iLiKE.css">
+    
+  
+  
+  
+  <script src="//cdn1.lncld.net/static/js/3.1.1/av-min.js"></script>
+    <script id="leancloud">
+      AV.init({
+          appId: "6E5zTbTljdUbVW2WkXPsXGJk-gzGzoHsz",
+          appKey: "0vsyDKfNpeSECAI70J794ugv"
+      });
+    </script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+<body>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
+        
+          
+          
+          
+          
+          
+          
+          <a href="/">首页</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/archives">归档</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/about">关于</a>
+        
+      </div>
+    </div>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title">kafka命令行操作</h1>
+<article class="post markdown-style">
+  <h2 id="二、Kafka命令行操作"><a href="#二、Kafka命令行操作" class="headerlink" title="二、Kafka命令行操作"></a>二、Kafka命令行操作</h2><h5 id="2-1-创建-topic"><a href="#2-1-创建-topic" class="headerlink" title="2.1 创建 topic"></a>2.1 创建 topic</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./kafka-topics.sh --zookeeper master:2181,slave1:2181,slave2:2181 --create --replication-factor 3 --partitions 3 --topic test_2</span><br><span class="line">--replication-factor 副本数量</span><br><span class="line">--partitions 分区数量</span><br><span class="line">--topic topic 名称</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>手动指定副本的存储位置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-topics.sh --create --topic test_3 --zookeeper master:2181 --replica-assignment 0:1,1:2</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2-2-删除-topic"><a href="#2-2-删除-topic" class="headerlink" title="2.2 删除 topic"></a>2.2 删除 topic</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./kafka-topics.sh  --delete --topic tpc_1 --zookeeper master：2181</span><br><span class="line">异步线程去删除）删除 topic,需要一个参数处于启用状态: delete.topic.enable = true,否则删不掉</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-3-查看-topic"><a href="#2-3-查看-topic" class="headerlink" title="2.3 查看 topic"></a>2.3 查看 topic</h5><ul>
+<li><p>列出当前系统中的所有 topic</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka-topics.sh --list --zookeeper master:2181</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看 topic 详细信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./kafka-topics.sh --create --topic tpc_1   --zookeeper master:2181 --replica-assignment 0:1,1:2</span><br><span class="line"></span><br><span class="line">./kafka-topics.sh --describe --topic tpc_1 --zookeper master:2181 </span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2-4-增加分区数"><a href="#2-4-增加分区数" class="headerlink" title="2.4 增加分区数"></a>2.4 增加分区数</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./kafka-topics.sh --alter --topic test_3 --partitions 3 --zookeeper master:2181</span><br><span class="line">Kafka 只支持增加分区,不支持减少分区</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-5-动态配置-topic-参数"><a href="#2-5-动态配置-topic-参数" class="headerlink" title="2.5 动态配置 topic 参数"></a>2.5 动态配置 topic 参数</h5><ul>
+<li><p>通过管理命令,可以为已创建的 topic 增加、修改、删除 topic level 参数</p>
+</li>
+<li><p>添加、修改配置参数（开启压缩发送传输种提高kafka消息吞吐量的有效办法(‘gzip’, ‘snappy’, ‘lz4’, ‘zstd’)）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-configs.sh --zookeeper master:2181 --entity-type topics --entity-name tpc_1 --alter --add-config compression.type=gzip </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除配置参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-configs.sh --zookeeper master:2181 --entity-type topics --entity-name tpc_1 --alter --delete-config compression.type</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2-6-Kafka命令行生产者与消费者操作"><a href="#2-6-Kafka命令行生产者与消费者操作" class="headerlink" title="2.6 Kafka命令行生产者与消费者操作"></a>2.6 Kafka命令行生产者与消费者操作</h5><ul>
+<li><p>生产者:kafka-console-producer</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-console-producer.sh --broker-list master:9092, slave1:9092, slave2:9092 --topic tpc_1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>消费者:kafka-console-consumer</p>
+</li>
+<li><p>消费消息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-console-consumer.sh --bootstrap-server master:9092, slave1:9092, slave2:9092 --topic tpc_1 --from-beginning</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指定要消费的分区,和要消费的起始 offset</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-console-consumer.sh --bootstrap-server master:9092,slave1:9092,slave2:9092 --topic tcp_1 --offset 2 --partition 0</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2-7-配置管理-kafka-configs"><a href="#2-7-配置管理-kafka-configs" class="headerlink" title="2.7 配置管理 kafka-configs"></a>2.7 配置管理 kafka-configs</h5><ul>
+<li><p>比如查看 topic 的配置可以按如下方式执行:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-configs.sh zookeeper master: 2181 --describe --entity-type topics --entity-name tpc_2 </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>比如查看 broker 的动态配置可以按如下方式执行:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-configs.sh zookeeper master: 2181 --describe --entity-type brokers --entity-name 0 --zookeeper master:2181</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+</article>
+
+    <div class="pagenator post-pagenator">
+    
+    
+
+    
+    <p>上次更新 2022-06-22</p>
+    
+    
+        <a class="extend next post-next" href="/2022/06/22/kafka%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/">下一篇</a>
+    
+    </div>
+
+
+    </div>
+    <div class="footer">
+        <div class="container">
+    <div class="social">
+	<ul class="social-list">
+		
+			
+				
+				
+				<li>
+					<a href="mailto:1178752402@qq.com" title="email" target="_blank">
+					<i class="fa fa-email"></i>
+					</a>
+				</li>
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+				
+				<li>
+					<a href="https://github.com/CaiChenghan" title="github" target="_self">
+					<i class="fa fa-github"></i>
+					</a>
+				</li>
+			
+		
+			
+		
+			
+		
+			
+		
+			
+				
+				<li>
+					<a href="https://www.jianshu.com/u/565c8e790605" title="jianshu" target="_self">
+					<i class="fa fa-jianshu"></i>
+					</a>
+				</li>
+			
+		
+			
+		
+			
+		
+			
+		
+	</ul>
+</div>
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © br1ghtLi 2017 - 2022
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> & <a target="_blank" rel="noopener" href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <!--page counter part-->
+<script>
+function addCount (Counter) {
+    url=$('.article-date').attr('href').trim();
+    title = $('.article-title').text().trim();
+    var query = new AV.Query(Counter);
+    //use url as unique idnetfication
+    query.equalTo("url",url);
+    query.find({
+        success: function(results) {
+            if (results.length>0) {
+                var counter=results[0];
+                counter.fetchWhenSave(true); //get recent result
+                counter.increment("time");
+                counter.save();
+            } else {
+                var newcounter=new Counter();
+                newcounter.set("title",title);
+                newcounter.set("url",url);
+                newcounter.set("time",1);
+                newcounter.save(null,{
+                    success: function(newcounter) {
+                        //alert('New object created');
+                    }, error: function(newcounter,error) {
+                        alert('Failed to create');
+                    }
+                })
+            }
+        },
+        error: function(error) {
+            //find null is not a error
+            alert('Error:'+error.code+" "+error.message);
+        }
+    });
+}
+$(function() {
+    var Counter=AV.Object.extend("Counter");
+    //only increse visit counting when intering a page
+    if ($('.article-title').length == 1) {
+       addCount(Counter);
+    }
+    var query=new AV.Query(Counter);
+    query.descending("time");
+    // the sum of popular posts
+    query.limit(10); 
+    query.find({
+        success: function(results) {
+                for(var i=0;i<results.length;i++) {
+                    var counter=results[i];
+                    title=counter.get("title");
+                    url=counter.get("url");
+                    time=counter.get("time");
+                    // add to the popularlist widget
+                    showcontent=title+" ("+time+")";
+                    //notice the "" in href
+                    $('.popularlist').append('<li><a href="'+url+'">'+showcontent+'</a></li>');
+                }
+            },
+        error: function(error) {
+            alert("Error:"+error.code+" "+error.message);
+        }
+    });
+});
+</script>
+</div>
+    </div>
+</body>
+</html>
